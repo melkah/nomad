@@ -54,6 +54,7 @@ func NewCoreScheduler(srv *Server, snap *state.StateSnapshot, planner sstructs.P
 		logger:                   srv.logger.ResetNamed("core.sched"),
 		planner:                  planner,
 		customThresholdForObject: make(map[string]*time.Duration),
+		dependecyChecker:         srv.dependencyCoordinator,
 	}
 
 	for _, opt := range opts {
@@ -171,7 +172,7 @@ OUTER:
 			continue
 		}
 
-		free, err := c.dependecyChecker.HasDependencies(job)
+ 		free, err := c.dependecyChecker.HasDependencies(job)
 		if err != nil {
 			c.logger.Error("job GC failed to get dependencies for job", "job", job.ID, "error", err)
 			continue
